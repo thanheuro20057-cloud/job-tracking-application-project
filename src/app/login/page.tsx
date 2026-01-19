@@ -1,6 +1,14 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    router.push("/dashboard");
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -31,7 +39,7 @@ export default function Home() {
           </div>
 
           <section className="rounded-[28px] border border-border/80 bg-card p-6 shadow-[0_18px_50px_rgba(16,20,24,0.12)] sm:p-8">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <label className="block text-sm font-medium">
                   Email address
