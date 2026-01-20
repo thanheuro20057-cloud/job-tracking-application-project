@@ -87,9 +87,12 @@ export default function DashboardPage() {
             Overview of your job search progress.
           </p>
         </div>
-        <button className="rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]">
+        <Link
+          href="/applications/new"
+          className="rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
+        >
           Add application
-        </button>
+        </Link>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
