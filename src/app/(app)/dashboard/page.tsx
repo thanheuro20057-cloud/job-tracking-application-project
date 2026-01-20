@@ -1,29 +1,71 @@
+import Link from "next/link";
+
+type ApplicationStatus = "Applied" | "Interview" | "Offer" | "Rejected";
+
+type Application = {
+  id: string;
+  company: string;
+  role: string;
+  status: ApplicationStatus;
+  date: string;
+};
+
+type FollowUp = {
+  id: string;
+  company: string;
+  note: string;
+  date: string;
+};
+
+type Interview = {
+  id: string;
+  company: string;
+  role: string;
+  date: string;
+  time: string;
+  countdown: string;
+};
+
 const stats = [
-  { label: "Total applications", value: "42" },
-  { label: "Interviews", value: "9" },
-  { label: "Offers", value: "2" },
-  { label: "Rejected", value: "14" },
-  { label: "This week", value: "5" },
+  { label: "Total", value: "42", helper: "Applications" },
+  { label: "Interviews", value: "9", helper: "In progress" },
+  { label: "Offers", value: "2", helper: "Received" },
+  { label: "Rejected", value: "14", helper: "Declined" },
+  { label: "This week", value: "5", helper: "Submitted" },
 ];
 
-const recent = [
-  { company: "Nova Tech", role: "Product Designer", status: "Interview", date: "Mar 18" },
-  { company: "Atlas Labs", role: "Frontend Engineer", status: "Applied", date: "Mar 15" },
-  { company: "Brightline", role: "UX Researcher", status: "Offer", date: "Mar 12" },
-  { company: "Serene AI", role: "Design Lead", status: "Rejected", date: "Mar 10" },
+const recent: Application[] = [
+  { id: "1", company: "Nova Tech", role: "Product Designer", status: "Interview", date: "Mar 18" },
+  { id: "2", company: "Atlas Labs", role: "Frontend Engineer", status: "Applied", date: "Mar 15" },
+  { id: "3", company: "Brightline", role: "UX Researcher", status: "Offer", date: "Mar 12" },
+  { id: "4", company: "Serene AI", role: "Design Lead", status: "Rejected", date: "Mar 10" },
 ];
 
-const followUps = [
-  { company: "Silver & Co", note: "Send portfolio update", date: "Mar 21" },
-  { company: "Kite Systems", note: "Ask about next steps", date: "Mar 22" },
+const followUps: FollowUp[] = [
+  { id: "1", company: "Silver & Co", note: "Send portfolio update", date: "Mar 21" },
+  { id: "2", company: "Kite Systems", note: "Ask about next steps", date: "Mar 22" },
 ];
 
-const interviews = [
-  { company: "Atlas Labs", role: "Frontend Engineer", date: "Mar 23", time: "10:30 AM" },
-  { company: "Nova Tech", role: "Product Designer", date: "Mar 25", time: "2:00 PM" },
+const interviews: Interview[] = [
+  {
+    id: "1",
+    company: "Atlas Labs",
+    role: "Frontend Engineer",
+    date: "Mar 23",
+    time: "10:30 AM",
+    countdown: "In 2 days",
+  },
+  {
+    id: "2",
+    company: "Nova Tech",
+    role: "Product Designer",
+    date: "Mar 25",
+    time: "2:00 PM",
+    countdown: "In 4 days",
+  },
 ];
 
-const statusStyles: Record<string, string> = {
+const statusStyles: Record<ApplicationStatus, string> = {
   Applied: "bg-secondary text-foreground",
   Interview: "bg-[#efe2ff] text-[#5f31a4]",
   Offer: "bg-[#e1f4ea] text-[#1f6b4a]",
@@ -35,6 +77,9 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Job application tracker
+          </p>
           <h1 className="text-3xl font-semibold font-[var(--font-space-grotesk)]">
             Dashboard
           </h1>
@@ -42,9 +87,12 @@ export default function DashboardPage() {
             Overview of your job search progress.
           </p>
         </div>
-        <button className="rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]">
+        <Link
+          href="/applications/new"
+          className="rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
+        >
           Add application
-        </button>
+        </Link>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -53,10 +101,12 @@ export default function DashboardPage() {
             key={stat.label}
             className="rounded-[22px] border border-border bg-card p-4 shadow-[0_12px_32px_rgba(16,20,24,0.08)]"
           >
-            <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">
-              {stat.label}
-            </p>
+            <div className="flex items-center justify-between text-xs uppercase tracking-[0.26em] text-muted-foreground">
+              <span>{stat.label}</span>
+              <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+            </div>
             <p className="mt-3 text-2xl font-semibold">{stat.value}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{stat.helper}</p>
           </div>
         ))}
       </section>
@@ -65,13 +115,15 @@ export default function DashboardPage() {
         <div className="rounded-[26px] border border-border bg-card p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent applications</h2>
-            <button className="text-sm font-medium text-muted-foreground">View all</button>
+            <Link className="text-sm font-medium text-muted-foreground" href="/applications">
+              View all
+            </Link>
           </div>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 divide-y divide-border/70">
             {recent.map((item) => (
               <div
-                key={`${item.company}-${item.role}`}
-                className="flex items-center justify-between rounded-2xl border border-border/70 bg-white/80 px-4 py-3"
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-4 py-3"
               >
                 <div>
                   <p className="text-sm font-semibold">{item.company}</p>
@@ -84,6 +136,12 @@ export default function DashboardPage() {
                     {item.status}
                   </span>
                   <span className="text-xs text-muted-foreground">{item.date}</span>
+                  <Link
+                    className="rounded-full border border-border px-3 py-1 text-xs font-semibold"
+                    href={`/applications/${item.id}`}
+                  >
+                    View
+                  </Link>
                 </div>
               </div>
             ))}
@@ -92,13 +150,26 @@ export default function DashboardPage() {
 
         <div className="space-y-6">
           <div className="rounded-[26px] border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold">Upcoming follow-ups</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Upcoming follow-ups</h2>
+              <Link className="text-xs font-semibold text-muted-foreground" href="/applications">
+                See all
+              </Link>
+            </div>
             <div className="mt-4 space-y-3 text-sm">
               {followUps.map((item) => (
-                <div key={item.company} className="rounded-2xl bg-secondary px-4 py-3">
-                  <p className="font-semibold">{item.company}</p>
-                  <p className="text-xs text-muted-foreground">{item.note}</p>
-                  <p className="mt-2 text-xs font-medium">{item.date}</p>
+                <div
+                  key={item.id}
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-secondary px-4 py-3"
+                >
+                  <div>
+                    <p className="font-semibold">{item.company}</p>
+                    <p className="text-xs text-muted-foreground">{item.note}</p>
+                    <p className="mt-2 text-xs font-medium">{item.date}</p>
+                  </div>
+                  <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
+                    Mark done
+                  </button>
                 </div>
               ))}
             </div>
@@ -108,12 +179,31 @@ export default function DashboardPage() {
             <h2 className="text-lg font-semibold">Upcoming interviews</h2>
             <div className="mt-4 space-y-3 text-sm">
               {interviews.map((item) => (
-                <div key={item.company} className="rounded-2xl border border-border/70 bg-white/80 px-4 py-3">
-                  <p className="font-semibold">{item.company}</p>
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-border/70 bg-white/80 px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="font-semibold">{item.company}</p>
+                    <span className="rounded-full bg-[#efe2ff] px-3 py-1 text-xs font-medium text-[#5f31a4]">
+                      {item.countdown}
+                    </span>
+                  </div>
                   <p className="text-xs text-muted-foreground">{item.role}</p>
                   <p className="mt-2 text-xs font-medium">
                     {item.date} - {item.time}
                   </p>
+                  <div className="mt-3 flex gap-2">
+                    <Link
+                      className="rounded-full border border-border px-3 py-1 text-xs font-semibold"
+                      href={`/applications/${item.id}`}
+                    >
+                      View
+                    </Link>
+                    <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
+                      Edit
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
