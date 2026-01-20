@@ -133,6 +133,12 @@ export default function DashboardPage() {
                     {item.status}
                   </span>
                   <span className="text-xs text-muted-foreground">{item.date}</span>
+                  <Link
+                    className="rounded-full border border-border px-3 py-1 text-xs font-semibold"
+                    href={`/applications/${item.id}`}
+                  >
+                    View
+                  </Link>
                 </div>
               </div>
             ))}
