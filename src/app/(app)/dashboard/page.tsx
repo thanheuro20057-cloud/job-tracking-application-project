@@ -147,13 +147,26 @@ export default function DashboardPage() {
 
         <div className="space-y-6">
           <div className="rounded-[26px] border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold">Upcoming follow-ups</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Upcoming follow-ups</h2>
+              <Link className="text-xs font-semibold text-muted-foreground" href="/applications">
+                See all
+              </Link>
+            </div>
             <div className="mt-4 space-y-3 text-sm">
               {followUps.map((item) => (
-                <div key={item.company} className="rounded-2xl bg-secondary px-4 py-3">
-                  <p className="font-semibold">{item.company}</p>
-                  <p className="text-xs text-muted-foreground">{item.note}</p>
-                  <p className="mt-2 text-xs font-medium">{item.date}</p>
+                <div
+                  key={item.id}
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-secondary px-4 py-3"
+                >
+                  <div>
+                    <p className="font-semibold">{item.company}</p>
+                    <p className="text-xs text-muted-foreground">{item.note}</p>
+                    <p className="mt-2 text-xs font-medium">{item.date}</p>
+                  </div>
+                  <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
+                    Mark done
+                  </button>
                 </div>
               ))}
             </div>
