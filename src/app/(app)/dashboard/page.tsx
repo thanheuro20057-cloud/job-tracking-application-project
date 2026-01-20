@@ -77,6 +77,9 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Job application tracker
+          </p>
           <h1 className="text-3xl font-semibold font-[var(--font-space-grotesk)]">
             Dashboard
           </h1>
