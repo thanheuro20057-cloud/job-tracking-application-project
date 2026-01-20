@@ -112,13 +112,15 @@ export default function DashboardPage() {
         <div className="rounded-[26px] border border-border bg-card p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent applications</h2>
-            <button className="text-sm font-medium text-muted-foreground">View all</button>
+            <Link className="text-sm font-medium text-muted-foreground" href="/applications">
+              View all
+            </Link>
           </div>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 divide-y divide-border/70">
             {recent.map((item) => (
               <div
-                key={`${item.company}-${item.role}`}
-                className="flex items-center justify-between rounded-2xl border border-border/70 bg-white/80 px-4 py-3"
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-4 py-3"
               >
                 <div>
                   <p className="text-sm font-semibold">{item.company}</p>
