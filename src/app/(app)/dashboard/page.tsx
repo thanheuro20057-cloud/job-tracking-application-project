@@ -1,29 +1,71 @@
+import Link from "next/link";
+
+type ApplicationStatus = "Applied" | "Interview" | "Offer" | "Rejected";
+
+type Application = {
+  id: string;
+  company: string;
+  role: string;
+  status: ApplicationStatus;
+  date: string;
+};
+
+type FollowUp = {
+  id: string;
+  company: string;
+  note: string;
+  date: string;
+};
+
+type Interview = {
+  id: string;
+  company: string;
+  role: string;
+  date: string;
+  time: string;
+  countdown: string;
+};
+
 const stats = [
-  { label: "Total applications", value: "42" },
-  { label: "Interviews", value: "9" },
-  { label: "Offers", value: "2" },
-  { label: "Rejected", value: "14" },
-  { label: "This week", value: "5" },
+  { label: "Total", value: "42", helper: "Applications" },
+  { label: "Interviews", value: "9", helper: "In progress" },
+  { label: "Offers", value: "2", helper: "Received" },
+  { label: "Rejected", value: "14", helper: "Declined" },
+  { label: "This week", value: "5", helper: "Submitted" },
 ];
 
-const recent = [
-  { company: "Nova Tech", role: "Product Designer", status: "Interview", date: "Mar 18" },
-  { company: "Atlas Labs", role: "Frontend Engineer", status: "Applied", date: "Mar 15" },
-  { company: "Brightline", role: "UX Researcher", status: "Offer", date: "Mar 12" },
-  { company: "Serene AI", role: "Design Lead", status: "Rejected", date: "Mar 10" },
+const recent: Application[] = [
+  { id: "1", company: "Nova Tech", role: "Product Designer", status: "Interview", date: "Mar 18" },
+  { id: "2", company: "Atlas Labs", role: "Frontend Engineer", status: "Applied", date: "Mar 15" },
+  { id: "3", company: "Brightline", role: "UX Researcher", status: "Offer", date: "Mar 12" },
+  { id: "4", company: "Serene AI", role: "Design Lead", status: "Rejected", date: "Mar 10" },
 ];
 
-const followUps = [
-  { company: "Silver & Co", note: "Send portfolio update", date: "Mar 21" },
-  { company: "Kite Systems", note: "Ask about next steps", date: "Mar 22" },
+const followUps: FollowUp[] = [
+  { id: "1", company: "Silver & Co", note: "Send portfolio update", date: "Mar 21" },
+  { id: "2", company: "Kite Systems", note: "Ask about next steps", date: "Mar 22" },
 ];
 
-const interviews = [
-  { company: "Atlas Labs", role: "Frontend Engineer", date: "Mar 23", time: "10:30 AM" },
-  { company: "Nova Tech", role: "Product Designer", date: "Mar 25", time: "2:00 PM" },
+const interviews: Interview[] = [
+  {
+    id: "1",
+    company: "Atlas Labs",
+    role: "Frontend Engineer",
+    date: "Mar 23",
+    time: "10:30 AM",
+    countdown: "In 2 days",
+  },
+  {
+    id: "2",
+    company: "Nova Tech",
+    role: "Product Designer",
+    date: "Mar 25",
+    time: "2:00 PM",
+    countdown: "In 4 days",
+  },
 ];
 
-const statusStyles: Record<string, string> = {
+const statusStyles: Record<ApplicationStatus, string> = {
   Applied: "bg-secondary text-foreground",
   Interview: "bg-[#efe2ff] text-[#5f31a4]",
   Offer: "bg-[#e1f4ea] text-[#1f6b4a]",
