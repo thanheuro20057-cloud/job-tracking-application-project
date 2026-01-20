@@ -176,12 +176,31 @@ export default function DashboardPage() {
             <h2 className="text-lg font-semibold">Upcoming interviews</h2>
             <div className="mt-4 space-y-3 text-sm">
               {interviews.map((item) => (
-                <div key={item.company} className="rounded-2xl border border-border/70 bg-white/80 px-4 py-3">
-                  <p className="font-semibold">{item.company}</p>
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-border/70 bg-white/80 px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="font-semibold">{item.company}</p>
+                    <span className="rounded-full bg-[#efe2ff] px-3 py-1 text-xs font-medium text-[#5f31a4]">
+                      {item.countdown}
+                    </span>
+                  </div>
                   <p className="text-xs text-muted-foreground">{item.role}</p>
                   <p className="mt-2 text-xs font-medium">
-                    {item.date} · {item.time}
+                    {item.date} - {item.time}
                   </p>
+                  <div className="mt-3 flex gap-2">
+                    <Link
+                      className="rounded-full border border-border px-3 py-1 text-xs font-semibold"
+                      href={`/applications/${item.id}`}
+                    >
+                      View
+                    </Link>
+                    <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
+                      Edit
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
