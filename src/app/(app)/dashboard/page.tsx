@@ -98,10 +98,12 @@ export default function DashboardPage() {
             key={stat.label}
             className="rounded-[22px] border border-border bg-card p-4 shadow-[0_12px_32px_rgba(16,20,24,0.08)]"
           >
-            <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">
-              {stat.label}
-            </p>
+            <div className="flex items-center justify-between text-xs uppercase tracking-[0.26em] text-muted-foreground">
+              <span>{stat.label}</span>
+              <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+            </div>
             <p className="mt-3 text-2xl font-semibold">{stat.value}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{stat.helper}</p>
           </div>
         ))}
       </section>
