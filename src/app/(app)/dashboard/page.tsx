@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   <p className="font-semibold">{item.company}</p>
                   <p className="text-xs text-muted-foreground">{item.role}</p>
                   <p className="mt-2 text-xs font-medium">
-                    {item.date} · {item.time}
+                    {item.date} - {item.time}
                   </p>
                 </div>
               ))}
