@@ -1,14 +1,73 @@
+import Link from "next/link";
+
+type ApplicationStatus = "Applied" | "Interview" | "Offer" | "Rejected";
+
 const filters = ["All", "Applied", "Interview", "Offer", "Rejected"];
 
 const applications = [
-  { company: "Nova Tech", role: "Product Designer", status: "Interview", date: "Mar 18", location: "Remote" },
-  { company: "Atlas Labs", role: "Frontend Engineer", status: "Applied", date: "Mar 15", location: "Austin, TX" },
-  { company: "Brightline", role: "UX Researcher", status: "Offer", date: "Mar 12", location: "New York, NY" },
-  { company: "Serene AI", role: "Design Lead", status: "Rejected", date: "Mar 10", location: "Remote" },
-  { company: "Kite Systems", role: "Product Manager", status: "Interview", date: "Mar 08", location: "Seattle, WA" },
+  {
+    id: "1",
+    company: "Nova Tech",
+    role: "Product Designer",
+    status: "Interview" as ApplicationStatus,
+    dateApplied: "Mar 18",
+    location: "Remote",
+    jobUrl: "https://jobs.novatech.com/design",
+    interviewDate: "Mar 25",
+    nextFollowUp: "Mar 22",
+    lastUpdated: "Mar 19",
+  },
+  {
+    id: "2",
+    company: "Atlas Labs",
+    role: "Frontend Engineer",
+    status: "Applied" as ApplicationStatus,
+    dateApplied: "Mar 15",
+    location: "Austin, TX",
+    jobUrl: "",
+    interviewDate: "",
+    nextFollowUp: "Mar 20",
+    lastUpdated: "Mar 16",
+  },
+  {
+    id: "3",
+    company: "Brightline",
+    role: "UX Researcher",
+    status: "Offer" as ApplicationStatus,
+    dateApplied: "Mar 12",
+    location: "New York, NY",
+    jobUrl: "https://brightline.com/careers/ux",
+    interviewDate: "Mar 14",
+    nextFollowUp: "",
+    lastUpdated: "Mar 15",
+  },
+  {
+    id: "4",
+    company: "Serene AI",
+    role: "Design Lead",
+    status: "Rejected" as ApplicationStatus,
+    dateApplied: "Mar 10",
+    location: "Remote",
+    jobUrl: "",
+    interviewDate: "",
+    nextFollowUp: "",
+    lastUpdated: "Mar 11",
+  },
+  {
+    id: "5",
+    company: "Kite Systems",
+    role: "Product Manager",
+    status: "Interview" as ApplicationStatus,
+    dateApplied: "Mar 08",
+    location: "Seattle, WA",
+    jobUrl: "https://kite.com/jobs/pm",
+    interviewDate: "Mar 21",
+    nextFollowUp: "Mar 18",
+    lastUpdated: "Mar 12",
+  },
 ];
 
-const statusStyles: Record<string, string> = {
+const statusStyles: Record<ApplicationStatus, string> = {
   Applied: "bg-secondary text-foreground",
   Interview: "bg-[#efe2ff] text-[#5f31a4]",
   Offer: "bg-[#e1f4ea] text-[#1f6b4a]",

@@ -1,7 +1,23 @@
+import Link from "next/link";
+
+const application = {
+  id: "1",
+  company: "Nova Tech",
+  role: "Product Designer",
+  status: "Interview",
+  dateApplied: "Mar 10, 2026",
+  nextFollowUp: "Mar 22, 2026",
+  lastUpdated: "Mar 19, 2026",
+  jobUrl: "https://jobs.novatech.com/design",
+  interviewDate: "Mar 25, 2026",
+  interviewTime: "2:00 PM",
+  notes: "Panel interview scheduled. Prepare case study and product critique.",
+};
+
 const timeline = [
-  { title: "Applied on website", date: "Mar 10", note: "Submitted resume and portfolio." },
-  { title: "Recruiter screen", date: "Mar 14", note: "Discussed role scope and team." },
-  { title: "Panel interview", date: "Mar 20", note: "Design challenge review." },
+  { title: "Application submitted", detail: "Status changed to Applied", date: "Mar 10" },
+  { title: "Recruiter screen", detail: "Met with talent team", date: "Mar 14" },
+  { title: "Interview scheduled", detail: "Panel on-site confirmed", date: "Mar 19" },
 ];
 
 export default function ApplicationDetailsPage() {
