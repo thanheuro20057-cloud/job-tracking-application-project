@@ -43,6 +43,13 @@ export default function AddApplicationPage() {
                 type="date"
               />
             </label>
+            <label className="text-sm font-medium">
+              Next follow-up
+              <input
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                type="date"
+              />
+            </label>
           </div>
 
           <label className="text-sm font-medium">
@@ -53,6 +60,62 @@ export default function AddApplicationPage() {
               placeholder="What did you discuss? What is next?"
             />
           </label>
+
+          <div className="space-y-4 border-t border-border pt-4">
+            <h2 className="text-lg font-semibold">Link and interview</h2>
+            <label className="text-sm font-medium">
+              Job posting URL
+              <input
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                placeholder="https://company.com/jobs"
+              />
+            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Interview date
+                <input
+                  className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                  type="date"
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Interview time
+                <input
+                  className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                  type="time"
+                />
+              </label>
+            </div>
+            <label className="flex items-center gap-3 rounded-2xl border border-border bg-secondary px-4 py-3 text-sm">
+              <input type="checkbox" className="h-4 w-4 rounded border-border" />
+              <span>
+                <span className="block font-semibold">Interview reminder</span>
+                <span className="block text-xs text-muted-foreground">
+                  Notify me 1 day before the interview.
+                </span>
+              </span>
+            </label>
+          </div>
+
+          <div className="space-y-4 border-t border-border pt-4">
+            <h2 className="text-lg font-semibold">Documents</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Resume
+                <input
+                  className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-2 text-sm"
+                  type="file"
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Cover letter
+                <input
+                  className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-2 text-sm"
+                  type="file"
+                />
+              </label>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
