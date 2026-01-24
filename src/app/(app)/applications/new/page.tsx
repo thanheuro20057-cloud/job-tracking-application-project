@@ -40,6 +40,7 @@ export default function AddApplicationPage() {
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <form
+          id="add-application-form"
           className="space-y-6 rounded-[26px] border border-border bg-card p-6"
           onSubmit={handleSubmit}
         >
@@ -180,7 +181,7 @@ export default function AddApplicationPage() {
           <button
             className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
             type="submit"
-            onClick={handleSubmit}
+            form="add-application-form"
             disabled={isSaving}
           >
             {isSaving ? "Saving..." : "Save application"}
