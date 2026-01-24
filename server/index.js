@@ -14,7 +14,14 @@ const applications = [
   },
 ];
 
+const setCors = (res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+};
+
 const sendJson = (res, statusCode, payload) => {
+  setCors(res);
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
     "Content-Type": "application/json",
@@ -47,10 +54,18 @@ const parseBody = (req) =>
   });
 
 const server = http.createServer(async (req, res) => {
+  if (req.method === "OPTIONS") {
+    setCors(res);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   const url = new URL(req.url, `http://${req.headers.host}`);
   const { pathname } = url;
 
   if (pathname === "/") {
+    setCors(res);
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("Job Tracker API is running.");
     return;
