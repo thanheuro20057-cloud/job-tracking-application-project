@@ -26,12 +26,47 @@ type Interview = {
   countdown: string;
 };
 
+const statIcons = {
+  total: (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  ),
+  interviews: (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M4 9h16" />
+    </svg>
+  ),
+  offers: (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12.5 2.5 2.5 4.5-5" />
+    </svg>
+  ),
+  rejected: (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m9 9 6 6M15 9l-6 6" />
+    </svg>
+  ),
+  week: (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M4 12a8 8 0 1 0 8-8" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  ),
+};
+
 const stats = [
-  { label: "Total", value: "42", helper: "Applications" },
-  { label: "Interviews", value: "9", helper: "In progress" },
-  { label: "Offers", value: "2", helper: "Received" },
-  { label: "Rejected", value: "14", helper: "Declined" },
-  { label: "This week", value: "5", helper: "Submitted" },
+  { label: "Total", value: "42", helper: "Applications", icon: statIcons.total, accent: "bg-secondary text-foreground" },
+  { label: "Interviews", value: "9", helper: "In progress", icon: statIcons.interviews, accent: "bg-[#efe2ff] text-[#5f31a4]" },
+  { label: "Offers", value: "2", helper: "Received", icon: statIcons.offers, accent: "bg-[#e1f4ea] text-[#1f6b4a]" },
+  { label: "Rejected", value: "14", helper: "Declined", icon: statIcons.rejected, accent: "bg-[#fde7e5] text-[#9b2c2c]" },
+  { label: "This week", value: "5", helper: "Submitted", icon: statIcons.week, accent: "bg-[#d7e5f7] text-[#1e3a8a]" },
 ];
 
 const recent: Application[] = [
@@ -103,7 +138,9 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between text-xs uppercase tracking-[0.26em] text-muted-foreground">
               <span>{stat.label}</span>
-              <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full ${stat.accent}`}>
+                {stat.icon}
+              </span>
             </div>
             <p className="mt-3 text-2xl font-semibold">{stat.value}</p>
             <p className="mt-1 text-xs text-muted-foreground">{stat.helper}</p>
