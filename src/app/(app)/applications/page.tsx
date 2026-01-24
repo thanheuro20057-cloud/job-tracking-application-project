@@ -1,73 +1,21 @@
-import Link from "next/link";
+"use client";
 
-type ApplicationStatus = "Applied" | "Interview" | "Offer" | "Rejected";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { getApplications, type Application } from "@/lib/api";
+
+type ApplicationRow = Application & {
+  dateAppliedLabel: string;
+  location: string;
+  interviewDate: string;
+  nextFollowUp: string;
+  lastUpdated: string;
+  jobUrl: string;
+};
 
 const filters = ["All", "Applied", "Interview", "Offer", "Rejected"];
 
-const applications = [
-  {
-    id: "1",
-    company: "Nova Tech",
-    role: "Product Designer",
-    status: "Interview" as ApplicationStatus,
-    dateApplied: "Mar 18",
-    location: "Remote",
-    jobUrl: "https://jobs.novatech.com/design",
-    interviewDate: "Mar 25",
-    nextFollowUp: "Mar 22",
-    lastUpdated: "Mar 19",
-  },
-  {
-    id: "2",
-    company: "Atlas Labs",
-    role: "Frontend Engineer",
-    status: "Applied" as ApplicationStatus,
-    dateApplied: "Mar 15",
-    location: "Austin, TX",
-    jobUrl: "",
-    interviewDate: "",
-    nextFollowUp: "Mar 20",
-    lastUpdated: "Mar 16",
-  },
-  {
-    id: "3",
-    company: "Brightline",
-    role: "UX Researcher",
-    status: "Offer" as ApplicationStatus,
-    dateApplied: "Mar 12",
-    location: "New York, NY",
-    jobUrl: "https://brightline.com/careers/ux",
-    interviewDate: "Mar 14",
-    nextFollowUp: "",
-    lastUpdated: "Mar 15",
-  },
-  {
-    id: "4",
-    company: "Serene AI",
-    role: "Design Lead",
-    status: "Rejected" as ApplicationStatus,
-    dateApplied: "Mar 10",
-    location: "Remote",
-    jobUrl: "",
-    interviewDate: "",
-    nextFollowUp: "",
-    lastUpdated: "Mar 11",
-  },
-  {
-    id: "5",
-    company: "Kite Systems",
-    role: "Product Manager",
-    status: "Interview" as ApplicationStatus,
-    dateApplied: "Mar 08",
-    location: "Seattle, WA",
-    jobUrl: "https://kite.com/jobs/pm",
-    interviewDate: "Mar 21",
-    nextFollowUp: "Mar 18",
-    lastUpdated: "Mar 12",
-  },
-];
-
-const statusStyles: Record<ApplicationStatus, string> = {
+const statusStyles: Record<string, string> = {
   Applied: "bg-secondary text-foreground",
   Interview: "bg-[#efe2ff] text-[#5f31a4]",
   Offer: "bg-[#e1f4ea] text-[#1f6b4a]",
@@ -75,6 +23,67 @@ const statusStyles: Record<ApplicationStatus, string> = {
 };
 
 export default function ApplicationsPage() {
+  const [applications, setApplications] = useState<ApplicationRow[]>([]);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isActive = true;
+    const load = async () => {
+      try {
+        const data = await getApplications();
+        if (!isActive) return;
+        const hydrated = data.map((item) => {
+          const created = new Date(item.createdAt);
+          return {
+            ...item,
+            dateAppliedLabel: created.toLocaleDateString(),
+            location: "Remote",
+            interviewDate: "",
+            nextFollowUp: "",
+            lastUpdated: created.toLocaleDateString(),
+            jobUrl: "",
+          };
+        });
+        setApplications(hydrated);
+      } catch (err) {
+        if (isActive) {
+          setError(err instanceof Error ? err.message : "Failed to load data");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+    load();
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const filteredApplications = useMemo(() => {
+    const filtered = applications.filter((app) => {
+      const matchesSearch = [app.company, app.role]
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "All" || app.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+
+    if (sortBy === "status") {
+      return [...filtered].sort((a, b) => a.status.localeCompare(b.status));
+    }
+
+    return [...filtered].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [applications, searchTerm, sortBy, statusFilter]);
+
   return (
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
@@ -140,88 +149,82 @@ export default function ApplicationsPage() {
             <div>Updated</div>
             <div className="text-right">Actions</div>
           </div>
-          {applications.map((app) => (
-            <div
-              key={app.id}
-              className="grid grid-cols-[1.4fr_1.4fr_0.8fr_0.7fr_0.8fr_0.8fr_0.7fr_0.7fr] items-center gap-3 border-t border-border/70 bg-white/80 px-4 py-3 text-sm"
-            >
-              <div>
-                <p className="font-semibold">{app.company}</p>
-                <p className="text-xs text-muted-foreground">{app.location}</p>
+          {isLoading ? (
+            <div className="px-4 py-6 text-sm text-muted-foreground">Loading applications...</div>
+          ) : (
+            filteredApplications.map((app) => (
+              <div
+                key={app.id}
+                className="grid grid-cols-[1.4fr_1.4fr_0.8fr_0.7fr_0.8fr_0.8fr_0.7fr_0.7fr] items-center gap-3 border-t border-border/70 bg-white/80 px-4 py-3 text-sm"
+              >
+                <div>
+                  <p className="font-semibold">{app.company}</p>
+                  <p className="text-xs text-muted-foreground">{app.location}</p>
+                </div>
+                <p>{app.role}</p>
+                <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status] || "bg-secondary text-foreground"}`}>
+                  {app.status}
+                </span>
+                <div className="text-xs text-muted-foreground">{app.jobUrl ? "Link" : "N/A"}</div>
+                <div className="text-xs text-muted-foreground">{app.interviewDate || "N/A"}</div>
+                <div className="text-xs text-muted-foreground">{app.nextFollowUp || "N/A"}</div>
+                <div className="text-xs text-muted-foreground">{app.lastUpdated}</div>
+                <div className="flex justify-end gap-2 text-xs">
+                  <Link className="rounded-full border border-border px-3 py-1 font-semibold" href={`/applications/${app.id}`}>
+                    View
+                  </Link>
+                  <Link
+                    className="rounded-full border border-border px-3 py-1 font-semibold"
+                    href={`/applications/${app.id}/edit`}
+                  >
+                    Edit
+                  </Link>
+                </div>
               </div>
-              <p>{app.role}</p>
-              <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status]}`}>
-                {app.status}
-              </span>
-              <div className="text-xs text-muted-foreground">
-                {app.jobUrl ? (
-                  <a className="underline" href={app.jobUrl} target="_blank" rel="noreferrer">
-                    Link
-                  </a>
-                ) : (
-                  "N/A"
-                )}
-              </div>
-              <div className="text-xs text-muted-foreground">{app.interviewDate || "N/A"}</div>
-              <div className="text-xs text-muted-foreground">{app.nextFollowUp || "N/A"}</div>
-              <div className="text-xs text-muted-foreground">{app.lastUpdated}</div>
-              <div className="flex justify-end gap-2 text-xs">
-                <Link className="rounded-full border border-border px-3 py-1 font-semibold" href={`/applications/${app.id}`}>
-                  View
-                </Link>
-                <Link
-                  className="rounded-full border border-border px-3 py-1 font-semibold"
-                  href={`/applications/${app.id}/edit`}
-                >
-                  Edit
-                </Link>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         <div className="mt-6 space-y-4 md:hidden">
-          {applications.map((app) => (
-            <div key={app.id} className="rounded-2xl border border-border/70 bg-white/80 p-4 text-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold">{app.company}</p>
-                  <p className="text-xs text-muted-foreground">{app.role}</p>
-                </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status]}`}>
-                  {app.status}
-                </span>
-              </div>
-              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-                <p>Location: {app.location}</p>
-                <p>Interview: {app.interviewDate || "N/A"}</p>
-                <p>Follow-up: {app.nextFollowUp || "N/A"}</p>
-                <p>Updated: {app.lastUpdated}</p>
-              </div>
-              <div className="mt-4 flex gap-2">
-                <Link
-                  className="flex-1 rounded-full border border-border px-3 py-2 text-center text-xs font-semibold"
-                  href={`/applications/${app.id}`}
-                >
-                  View
-                </Link>
-                <Link
-                  className="flex-1 rounded-full border border-border px-3 py-2 text-center text-xs font-semibold"
-                  href={`/applications/${app.id}/edit`}
-                >
-                  Edit
-                </Link>
-              </div>
+          {isLoading ? (
+            <div className="rounded-2xl border border-border/70 bg-white/80 p-4 text-sm text-muted-foreground">
+              Loading applications...
             </div>
-          ))}
-        </div>
-
-        <div className="mt-6 flex items-center justify-center gap-3 text-xs text-muted-foreground">
-          <button className="rounded-full border border-border px-3 py-2 font-semibold">Previous</button>
-          <span className="rounded-full border border-border bg-secondary px-4 py-2 font-semibold">
-            1 of 3
-          </span>
-          <button className="rounded-full border border-border px-3 py-2 font-semibold">Next</button>
+          ) : (
+            filteredApplications.map((app) => (
+              <div key={app.id} className="rounded-2xl border border-border/70 bg-white/80 p-4 text-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">{app.company}</p>
+                    <p className="text-xs text-muted-foreground">{app.role}</p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status] || "bg-secondary text-foreground"}`}>
+                    {app.status}
+                  </span>
+                </div>
+                <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                  <p>Location: {app.location}</p>
+                  <p>Interview: {app.interviewDate || "N/A"}</p>
+                  <p>Follow-up: {app.nextFollowUp || "N/A"}</p>
+                  <p>Updated: {app.lastUpdated}</p>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Link
+                    className="flex-1 rounded-full border border-border px-3 py-2 text-center text-xs font-semibold"
+                    href={`/applications/${app.id}`}
+                  >
+                    View
+                  </Link>
+                  <Link
+                    className="flex-1 rounded-full border border-border px-3 py-2 text-center text-xs font-semibold"
+                    href={`/applications/${app.id}/edit`}
+                  >
+                    Edit
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
     </div>
