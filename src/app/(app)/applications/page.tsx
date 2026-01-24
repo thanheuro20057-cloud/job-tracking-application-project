@@ -106,11 +106,14 @@ export default function ApplicationsPage() {
       <section className="rounded-[26px] border border-border bg-card p-6">
         <div className="space-y-4">
           <div className="flex flex-wrap gap-3">
-            {filters.map((filter, index) => (
+            {filters.map((filter) => (
               <button
                 key={filter}
+                onClick={() => setStatusFilter(filter)}
                 className={`rounded-full px-4 py-2 text-xs font-semibold ${
-                  index === 0 ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
+                  statusFilter === filter
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground"
                 }`}
               >
                 {filter}
@@ -122,21 +125,34 @@ export default function ApplicationsPage() {
             <input
               className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
               placeholder="Search by company or role"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
             />
-            <select className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm">
-              <option>Status: All</option>
-              <option>Applied</option>
-              <option>Interview</option>
-              <option>Offer</option>
-              <option>Rejected</option>
+            <select
+              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+            >
+              {filters.map((filter) => (
+                <option key={filter}>{filter}</option>
+              ))}
             </select>
-            <select className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm">
-              <option>Sort by date</option>
-              <option>Sort by status</option>
-              <option>Sort by follow-up</option>
+            <select
+              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+            >
+              <option value="date">Sort by date</option>
+              <option value="status">Sort by status</option>
             </select>
           </div>
         </div>
+
+        {error ? (
+          <div className="mt-6 rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+            {error}
+          </div>
+        ) : null}
 
         <div className="mt-6 hidden md:block overflow-hidden rounded-2xl border border-border/70">
           <div className="grid grid-cols-[1.4fr_1.4fr_0.8fr_0.7fr_0.8fr_0.8fr_0.7fr_0.7fr] gap-3 bg-secondary px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
