@@ -119,29 +119,16 @@ export default function AddApplicationPage() {
         </div>
 
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h2 className="text-lg font-semibold">Next steps</h2>
-            <label className="text-sm font-medium">
-              Follow-up date
-              <input
-                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-                type="date"
-              />
-            </label>
-            <label className="text-sm font-medium">
-              Interview date
-              <input
-                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-                type="date"
-              />
-            </label>
-            <label className="text-sm font-medium">
-              Interview time
-              <input
-                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-                type="time"
-              />
-            </label>
+            <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+              Add follow-up and interview details on the left to keep your plan in one place.
+            </div>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>1. Confirm recruiter contact</p>
+              <p>2. Prepare interview notes</p>
+              <p>3. Upload resume and cover letter</p>
+            </div>
           </div>
           <button className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]">
             Save application
