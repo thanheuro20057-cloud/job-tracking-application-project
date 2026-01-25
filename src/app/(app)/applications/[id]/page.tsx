@@ -1,26 +1,83 @@
-import Link from "next/link";
+"use client";
 
-const application = {
-  id: "1",
-  company: "Nova Tech",
-  role: "Product Designer",
-  status: "Interview",
-  dateApplied: "Mar 10, 2026",
-  nextFollowUp: "Mar 22, 2026",
-  lastUpdated: "Mar 19, 2026",
-  jobUrl: "https://jobs.novatech.com/design",
-  interviewDate: "Mar 25, 2026",
-  interviewTime: "2:00 PM",
-  notes: "Panel interview scheduled. Prepare case study and product critique.",
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getApplicationById } from "@/lib/api";
+
+type ApplicationDetail = {
+  id: string;
+  company: string;
+  role: string;
+  status: string;
+  createdAt: string;
 };
 
-const timeline = [
+type TimelineEvent = {
+  title: string;
+  detail: string;
+  date: string;
+};
+
+const fallbackTimeline: TimelineEvent[] = [
   { title: "Application submitted", detail: "Status changed to Applied", date: "Mar 10" },
   { title: "Recruiter screen", detail: "Met with talent team", date: "Mar 14" },
   { title: "Interview scheduled", detail: "Panel on-site confirmed", date: "Mar 19" },
 ];
 
 export default function ApplicationDetailsPage() {
+  const params = useParams();
+  const id = typeof params.id === "string" ? params.id : "";
+  const [application, setApplication] = useState<ApplicationDetail | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isActive = true;
+    const load = async () => {
+      try {
+        const data = await getApplicationById(id);
+        if (!isActive) return;
+        setApplication(data);
+      } catch (err) {
+        if (isActive) {
+          setError(err instanceof Error ? err.message : "Failed to load application");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      load();
+    } else {
+      setIsLoading(false);
+      setError("Invalid application id");
+    }
+
+    return () => {
+      isActive = false;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+        Loading application...
+      </div>
+    );
+  }
+
+  if (error || !application) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+        {error || "Application not found"}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
@@ -51,39 +108,24 @@ export default function ApplicationDetailsPage() {
           <div className="rounded-[26px] border border-border bg-card p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Job posting</h2>
-              <a
-                className="text-xs font-semibold underline"
-                href={application.jobUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open link
-              </a>
+              <span className="text-xs text-muted-foreground">Link not provided</span>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground break-all">{application.jobUrl}</p>
+            <p className="mt-2 text-xs text-muted-foreground">Add a job posting URL in edit mode.</p>
           </div>
 
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Interview</h2>
             <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-              <p>Date: {application.interviewDate}</p>
-              <p>Time: {application.interviewTime}</p>
-              <p>Status: Scheduled</p>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
-                Reschedule
-              </button>
-              <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
-                Add reminder
-              </button>
+              <p>Date: Not scheduled</p>
+              <p>Time: Not scheduled</p>
+              <p>Status: Pending</p>
             </div>
           </div>
 
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Activity timeline</h2>
             <div className="mt-4 space-y-4">
-              {timeline.map((item) => (
+              {fallbackTimeline.map((item) => (
                 <div key={item.title} className="rounded-2xl border border-border/70 bg-white/80 px-4 py-3">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold">{item.title}</p>
@@ -105,22 +147,28 @@ export default function ApplicationDetailsPage() {
             <dl className="mt-3 space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center justify-between">
                 <dt>Date applied</dt>
-                <dd className="font-semibold text-foreground">{application.dateApplied}</dd>
+                <dd className="font-semibold text-foreground">
+                  {new Date(application.createdAt).toLocaleDateString()}
+                </dd>
               </div>
               <div className="flex items-center justify-between">
                 <dt>Next follow-up</dt>
-                <dd className="font-semibold text-foreground">{application.nextFollowUp}</dd>
+                <dd className="font-semibold text-foreground">Not scheduled</dd>
               </div>
               <div className="flex items-center justify-between">
                 <dt>Last updated</dt>
-                <dd className="font-semibold text-foreground">{application.lastUpdated}</dd>
+                <dd className="font-semibold text-foreground">
+                  {new Date(application.createdAt).toLocaleDateString()}
+                </dd>
               </div>
             </dl>
           </div>
 
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Notes</h2>
-            <p className="mt-3 text-sm text-muted-foreground">{application.notes}</p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Notes will appear here once added.
+            </p>
             <button className="mt-4 rounded-full border border-border px-3 py-1 text-xs font-semibold">
               Add note
             </button>
@@ -130,10 +178,10 @@ export default function ApplicationDetailsPage() {
             <h2 className="text-lg font-semibold">Follow-ups</h2>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
               <div className="rounded-2xl border border-border/70 bg-secondary px-4 py-3">
-                Follow-up scheduled for {application.nextFollowUp}.
+                No follow-ups scheduled.
               </div>
               <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
-                Mark done
+                Add follow-up
               </button>
             </div>
           </div>
@@ -141,13 +189,8 @@ export default function ApplicationDetailsPage() {
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Documents</h2>
             <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-secondary px-4 py-3">
-                <span>Resume.pdf</span>
-                <button className="text-xs font-semibold underline">View</button>
-              </div>
-              <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-secondary px-4 py-3">
-                <span>CoverLetter.pdf</span>
-                <button className="text-xs font-semibold underline">View</button>
+              <div className="rounded-2xl border border-border/70 bg-secondary px-4 py-3">
+                No documents uploaded yet.
               </div>
             </div>
           </div>

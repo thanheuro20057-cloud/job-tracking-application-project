@@ -1,4 +1,32 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createApplication } from "@/lib/api";
+
 export default function AddApplicationPage() {
+  const router = useRouter();
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("Applied");
+  const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setIsSaving(true);
+    try {
+      await createApplication({ company, role, status });
+      router.push("/applications");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <section>
@@ -11,13 +39,20 @@ export default function AddApplicationPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
+        <form
+          id="add-application-form"
+          className="space-y-6 rounded-[26px] border border-border bg-card p-6"
+          onSubmit={handleSubmit}
+        >
           <div className="grid gap-4 md:grid-cols-2">
             <label className="text-sm font-medium">
               Company
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 placeholder="Nova Tech"
+                value={company}
+                onChange={(event) => setCompany(event.target.value)}
+                required
               />
             </label>
             <label className="text-sm font-medium">
@@ -25,11 +60,18 @@ export default function AddApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 placeholder="Frontend Engineer"
+                value={role}
+                onChange={(event) => setRole(event.target.value)}
+                required
               />
             </label>
             <label className="text-sm font-medium">
               Status
-              <select className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm">
+              <select
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                value={status}
+                onChange={(event) => setStatus(event.target.value)}
+              >
                 <option>Applied</option>
                 <option>Interview</option>
                 <option>Offer</option>
@@ -116,7 +158,13 @@ export default function AddApplicationPage() {
               </label>
             </div>
           </div>
-        </div>
+
+          {error ? (
+            <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+              {error}
+            </div>
+          ) : null}
+        </form>
 
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
           <div className="space-y-3">
@@ -130,8 +178,13 @@ export default function AddApplicationPage() {
               <p>3. Upload resume and cover letter</p>
             </div>
           </div>
-          <button className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]">
-            Save application
+          <button
+            className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
+            type="submit"
+            form="add-application-form"
+            disabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Save application"}
           </button>
         </div>
       </section>

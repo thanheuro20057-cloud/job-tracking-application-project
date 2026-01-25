@@ -1,6 +1,81 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getApplicationById } from "@/lib/api";
+
+type FormState = {
+  company: string;
+  role: string;
+  status: string;
+  dateApplied: string;
+  nextFollowUp: string;
+  notes: string;
+  jobUrl: string;
+  interviewDate: string;
+  interviewTime: string;
+};
+
+const emptyForm: FormState = {
+  company: "",
+  role: "",
+  status: "Applied",
+  dateApplied: "",
+  nextFollowUp: "",
+  notes: "",
+  jobUrl: "",
+  interviewDate: "",
+  interviewTime: "",
+};
 
 export default function EditApplicationPage() {
+  const params = useParams();
+  const id = typeof params.id === "string" ? params.id : "";
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isActive = true;
+    const load = async () => {
+      try {
+        const data = await getApplicationById(id);
+        if (!isActive) return;
+        setForm({
+          company: data.company,
+          role: data.role,
+          status: data.status || "Applied",
+          dateApplied: data.createdAt.slice(0, 10),
+          nextFollowUp: "",
+          notes: "",
+          jobUrl: "",
+          interviewDate: "",
+          interviewTime: "",
+        });
+      } catch (err) {
+        if (isActive) {
+          setError(err instanceof Error ? err.message : "Failed to load application");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      load();
+    } else {
+      setIsLoading(false);
+      setError("Invalid application id");
+    }
+
+    return () => {
+      isActive = false;
+    };
+  }, [id]);
+
   return (
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
@@ -23,6 +98,12 @@ export default function EditApplicationPage() {
         </Link>
       </section>
 
+      {error ? (
+        <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+          {error}
+        </div>
+      ) : null}
+
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
           <div className="grid gap-4 md:grid-cols-2">
@@ -30,19 +111,28 @@ export default function EditApplicationPage() {
               Company
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-                defaultValue="Nova Tech"
+                value={form.company}
+                onChange={(event) => setForm({ ...form, company: event.target.value })}
+                disabled={isLoading}
               />
             </label>
             <label className="text-sm font-medium">
               Role
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-                defaultValue="Product Designer"
+                value={form.role}
+                onChange={(event) => setForm({ ...form, role: event.target.value })}
+                disabled={isLoading}
               />
             </label>
             <label className="text-sm font-medium">
               Status
-              <select className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm" defaultValue="Interview">
+              <select
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                value={form.status}
+                onChange={(event) => setForm({ ...form, status: event.target.value })}
+                disabled={isLoading}
+              >
                 <option>Applied</option>
                 <option>Interview</option>
                 <option>Offer</option>
@@ -54,7 +144,9 @@ export default function EditApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="date"
-                defaultValue="2026-03-10"
+                value={form.dateApplied}
+                onChange={(event) => setForm({ ...form, dateApplied: event.target.value })}
+                disabled={isLoading}
               />
             </label>
           </div>
@@ -64,7 +156,9 @@ export default function EditApplicationPage() {
             <textarea
               className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
               rows={4}
-              defaultValue="Panel interview scheduled. Prepare case study."
+              value={form.notes}
+              onChange={(event) => setForm({ ...form, notes: event.target.value })}
+              disabled={isLoading}
             />
           </label>
 
@@ -72,7 +166,9 @@ export default function EditApplicationPage() {
             Job posting URL
             <input
               className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
-              defaultValue="https://jobs.novatech.com/design"
+              value={form.jobUrl}
+              onChange={(event) => setForm({ ...form, jobUrl: event.target.value })}
+              disabled={isLoading}
             />
           </label>
         </div>
@@ -85,7 +181,9 @@ export default function EditApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="date"
-                defaultValue="2026-03-22"
+                value={form.nextFollowUp}
+                onChange={(event) => setForm({ ...form, nextFollowUp: event.target.value })}
+                disabled={isLoading}
               />
             </label>
             <label className="text-sm font-medium">
@@ -93,7 +191,9 @@ export default function EditApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="date"
-                defaultValue="2026-03-25"
+                value={form.interviewDate}
+                onChange={(event) => setForm({ ...form, interviewDate: event.target.value })}
+                disabled={isLoading}
               />
             </label>
             <label className="text-sm font-medium">
@@ -101,28 +201,23 @@ export default function EditApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="time"
-                defaultValue="14:00"
+                value={form.interviewTime}
+                onChange={(event) => setForm({ ...form, interviewTime: event.target.value })}
+                disabled={isLoading}
               />
             </label>
           </div>
 
-          <div className="space-y-3">
-            <h2 className="text-lg font-semibold">Documents</h2>
-            <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-xs text-muted-foreground">
-              Resume.pdf uploaded
-            </div>
-            <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-xs text-muted-foreground">
-              CoverLetter.pdf uploaded
-            </div>
-            <button className="rounded-full border border-border px-3 py-2 text-xs font-semibold">
-              Manage documents
-            </button>
-          </div>
-
-          <button className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]">
+          <button
+            className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
+            disabled={isLoading}
+          >
             Save changes
           </button>
-          <button className="w-full rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-muted-foreground">
+          <button
+            className="w-full rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-muted-foreground"
+            disabled={isLoading}
+          >
             Delete application
           </button>
         </div>
