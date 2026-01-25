@@ -19,6 +19,18 @@ export const getApplications = async () => {
   return payload.data as Application[];
 };
 
+export const getApplicationById = async (id: string) => {
+  const response = await fetch(`${API_BASE}/api/applications/${id}`, {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "Failed to load application");
+  }
+  const payload = await response.json();
+  return payload.data as Application;
+};
+
 export const createApplication = async (data: {
   company: string;
   role: string;

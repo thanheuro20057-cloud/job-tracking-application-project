@@ -109,6 +109,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname.startsWith("/api/applications/")) {
+    const id = pathname.split("/").pop();
+    const application = applications.find((item) => item.id === id);
+
+    if (req.method === "GET") {
+      if (!application) {
+        sendJson(res, 404, { error: "Application not found" });
+        return;
+      }
+      sendJson(res, 200, { data: application });
+      return;
+    }
+
+    sendJson(res, 405, { error: "Method not allowed" });
+    return;
+  }
+
   sendJson(res, 404, { error: "Not found" });
 });
 
