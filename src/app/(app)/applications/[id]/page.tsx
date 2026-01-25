@@ -26,8 +26,8 @@ const fallbackTimeline: TimelineEvent[] = [
 ];
 
 export default function ApplicationDetailsPage() {
-  const params = useParams();
-  const id = typeof params.id === "string" ? params.id : "";
+  const params = useParams() as Record<string, string | string[]> | null;
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? "";
   const [application, setApplication] = useState<ApplicationDetail | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);

@@ -30,8 +30,8 @@ const emptyForm: FormState = {
 };
 
 export default function EditApplicationPage() {
-  const params = useParams();
-  const id = typeof params.id === "string" ? params.id : "";
+  const params = useParams() as Record<string, string | string[]> | null;
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? "";
   const [form, setForm] = useState<FormState>(emptyForm);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
