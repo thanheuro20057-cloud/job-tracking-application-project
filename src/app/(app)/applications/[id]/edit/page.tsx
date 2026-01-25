@@ -1,6 +1,81 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getApplicationById } from "@/lib/api";
+
+type FormState = {
+  company: string;
+  role: string;
+  status: string;
+  dateApplied: string;
+  nextFollowUp: string;
+  notes: string;
+  jobUrl: string;
+  interviewDate: string;
+  interviewTime: string;
+};
+
+const emptyForm: FormState = {
+  company: "",
+  role: "",
+  status: "Applied",
+  dateApplied: "",
+  nextFollowUp: "",
+  notes: "",
+  jobUrl: "",
+  interviewDate: "",
+  interviewTime: "",
+};
 
 export default function EditApplicationPage() {
+  const params = useParams();
+  const id = typeof params.id === "string" ? params.id : "";
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isActive = true;
+    const load = async () => {
+      try {
+        const data = await getApplicationById(id);
+        if (!isActive) return;
+        setForm({
+          company: data.company,
+          role: data.role,
+          status: data.status || "Applied",
+          dateApplied: data.createdAt.slice(0, 10),
+          nextFollowUp: "",
+          notes: "",
+          jobUrl: "",
+          interviewDate: "",
+          interviewTime: "",
+        });
+      } catch (err) {
+        if (isActive) {
+          setError(err instanceof Error ? err.message : "Failed to load application");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      load();
+    } else {
+      setIsLoading(false);
+      setError("Invalid application id");
+    }
+
+    return () => {
+      isActive = false;
+    };
+  }, [id]);
+
   return (
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
@@ -22,6 +97,12 @@ export default function EditApplicationPage() {
           Back to list
         </Link>
       </section>
+
+      {error ? (
+        <div className="rounded-2xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+          {error}
+        </div>
+      ) : null}
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
