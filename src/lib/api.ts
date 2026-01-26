@@ -56,3 +56,47 @@ export const createApplication = async (data: {
   const payload = await response.json();
   return payload.data as Application;
 };
+
+// Update an existing application by id.
+export const updateApplication = async (
+  id: string,
+  data: Partial<
+    Pick<
+      Application,
+      | "company"
+      | "role"
+      | "status"
+      | "dateApplied"
+      | "nextFollowUp"
+      | "notes"
+      | "jobUrl"
+      | "interviewDate"
+      | "interviewTime"
+    >
+  >
+) => {
+  const response = await fetch(`${API_BASE}/api/applications/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "Failed to update application");
+  }
+  const payload = await response.json();
+  return payload.data as Application;
+};
+
+// Remove an application by id.
+export const deleteApplication = async (id: string) => {
+  const response = await fetch(`${API_BASE}/api/applications/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "Failed to delete application");
+  }
+  const payload = await response.json();
+  return payload.data as Application;
+};
