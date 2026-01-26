@@ -14,12 +14,14 @@ const applications = [
   },
 ];
 
+// Minimal CORS headers for local dev requests.
 const setCors = (res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 };
 
+// Standardize JSON responses across routes.
 const sendJson = (res, statusCode, payload) => {
   setCors(res);
   const body = JSON.stringify(payload);
@@ -30,6 +32,7 @@ const sendJson = (res, statusCode, payload) => {
   res.end(body);
 };
 
+// Collect and parse JSON request bodies (POST).
 const parseBody = (req) =>
   new Promise((resolve, reject) => {
     let raw = "";
@@ -53,6 +56,7 @@ const parseBody = (req) =>
     });
   });
 
+// Simple router based on URL path and HTTP method.
 const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     setCors(res);

@@ -30,6 +30,7 @@ export default function ApplicationsPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load applications once when the page mounts.
   useEffect(() => {
     let isActive = true;
     const load = async () => {
@@ -65,6 +66,7 @@ export default function ApplicationsPage() {
     };
   }, []);
 
+  // Client-side filter and sort for the table view.
   const filteredApplications = useMemo(() => {
     const filtered = applications.filter((app) => {
       const matchesSearch = [app.company, app.role]

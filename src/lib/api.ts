@@ -1,3 +1,4 @@
+// Points to the Node API server; override via NEXT_PUBLIC_API_BASE.
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
 
 export type Application = {
@@ -8,6 +9,7 @@ export type Application = {
   createdAt: string;
 };
 
+// Fetch the latest list without caching to keep the UI current.
 export const getApplications = async () => {
   const response = await fetch(`${API_BASE}/api/applications`, {
     cache: "no-store",
@@ -19,6 +21,7 @@ export const getApplications = async () => {
   return payload.data as Application[];
 };
 
+// Fetch a single application by id.
 export const getApplicationById = async (id: string) => {
   const response = await fetch(`${API_BASE}/api/applications/${id}`, {
     cache: "no-store",
@@ -31,6 +34,7 @@ export const getApplicationById = async (id: string) => {
   return payload.data as Application;
 };
 
+// Create a new application via the API.
 export const createApplication = async (data: {
   company: string;
   role: string;

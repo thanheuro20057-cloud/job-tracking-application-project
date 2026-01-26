@@ -3,6 +3,7 @@ import { Manrope, Space_Grotesk } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
+// Load brand fonts and expose CSS variables.
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],

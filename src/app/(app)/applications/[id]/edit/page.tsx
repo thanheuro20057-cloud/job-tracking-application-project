@@ -36,6 +36,7 @@ export default function EditApplicationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Load application details for the selected id.
   useEffect(() => {
     let isActive = true;
     const load = async () => {

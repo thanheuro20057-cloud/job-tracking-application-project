@@ -26,6 +26,7 @@ type Interview = {
   countdown: string;
 };
 
+// Inline icons used by the stat cards.
 const statIcons = {
   total: (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -61,6 +62,7 @@ const statIcons = {
   ),
 };
 
+// Demo data for the dashboard summary cards.
 const stats = [
   { label: "Total", value: "42", helper: "Applications", icon: statIcons.total, accent: "bg-secondary text-foreground" },
   { label: "Interviews", value: "9", helper: "In progress", icon: statIcons.interviews, accent: "bg-[#efe2ff] text-[#5f31a4]" },

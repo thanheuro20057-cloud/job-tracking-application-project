@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+// Shared navigation items for sidebar and mobile nav.
 const navItems = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Applications", href: "/applications" },

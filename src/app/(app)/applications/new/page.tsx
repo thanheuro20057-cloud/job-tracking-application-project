@@ -12,6 +12,7 @@ export default function AddApplicationPage() {
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Create the application via API, then return to the list.
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
@@ -39,6 +40,7 @@ export default function AddApplicationPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        {/* Form id allows the sidebar button to submit. */}
         <form
           id="add-application-form"
           className="space-y-6 rounded-[26px] border border-border bg-card p-6"
