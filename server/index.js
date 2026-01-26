@@ -11,12 +11,19 @@ const applications = [
     role: "Product Designer",
     status: "Interview",
     createdAt: new Date().toISOString(),
+    dateApplied: new Date().toISOString().slice(0, 10),
+    nextFollowUp: "",
+    notes: "",
+    jobUrl: "",
+    interviewDate: "",
+    interviewTime: "",
+    updatedAt: new Date().toISOString(),
   },
 ];
 
 const setCors = (res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 };
 
@@ -30,6 +37,10 @@ const sendJson = (res, statusCode, payload) => {
   res.end(body);
 };
 
+<<<<<<< Updated upstream
+=======
+// Collect and parse JSON request bodies (POST/PATCH).
+>>>>>>> Stashed changes
 const parseBody = (req) =>
   new Promise((resolve, reject) => {
     let raw = "";
@@ -91,11 +102,18 @@ const server = http.createServer(async (req, res) => {
         }
 
         const newApplication = {
-          id: String(applications.length + 1),
+          id: String(Date.now()),
           company: body.company,
           role: body.role,
           status: body.status || "Applied",
           createdAt: new Date().toISOString(),
+          dateApplied: body.dateApplied || "",
+          nextFollowUp: body.nextFollowUp || "",
+          notes: body.notes || "",
+          jobUrl: body.jobUrl || "",
+          interviewDate: body.interviewDate || "",
+          interviewTime: body.interviewTime || "",
+          updatedAt: new Date().toISOString(),
         };
         applications.push(newApplication);
         sendJson(res, 201, { data: newApplication });
@@ -119,6 +137,49 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       sendJson(res, 200, { data: application });
+      return;
+    }
+
+    if (req.method === "PATCH") {
+      if (!application) {
+        sendJson(res, 404, { error: "Application not found" });
+        return;
+      }
+      try {
+        const body = await parseBody(req);
+        if (!body) {
+          sendJson(res, 400, { error: "Request body required" });
+          return;
+        }
+
+        Object.assign(application, {
+          company: body.company ?? application.company,
+          role: body.role ?? application.role,
+          status: body.status ?? application.status,
+          dateApplied: body.dateApplied ?? application.dateApplied,
+          nextFollowUp: body.nextFollowUp ?? application.nextFollowUp,
+          notes: body.notes ?? application.notes,
+          jobUrl: body.jobUrl ?? application.jobUrl,
+          interviewDate: body.interviewDate ?? application.interviewDate,
+          interviewTime: body.interviewTime ?? application.interviewTime,
+          updatedAt: new Date().toISOString(),
+        });
+
+        sendJson(res, 200, { data: application });
+      } catch (error) {
+        sendJson(res, 400, { error: "Invalid JSON payload" });
+      }
+      return;
+    }
+
+    if (req.method === "DELETE") {
+      const index = applications.findIndex((item) => item.id === id);
+      if (index == -1) {
+        sendJson(res, 404, { error: "Application not found" });
+        return;
+      }
+      const [removed] = applications.splice(index, 1);
+      sendJson(res, 200, { data: removed });
       return;
     }
 
