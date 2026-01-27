@@ -7,8 +7,16 @@ export type Application = {
   role: string;
   status: string;
   createdAt: string;
+  dateApplied?: string;
+  nextFollowUp?: string;
+  notes?: string;
+  jobUrl?: string;
+  interviewDate?: string;
+  interviewTime?: string;
+  updatedAt?: string;
 };
 
+// Fetch the latest list without caching to keep the UI current.
 export const getApplications = async () => {
   const response = await fetch(`${API_BASE}/api/applications`, {
     cache: "no-store",
