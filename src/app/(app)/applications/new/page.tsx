@@ -56,6 +56,7 @@ export default function AddApplicationPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        {/* Form id allows the sidebar button to submit. */}
         <form
           id="add-application-form"
           className="space-y-6 rounded-[26px] border border-border bg-card p-6"
@@ -100,6 +101,8 @@ export default function AddApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="date"
+                value={dateApplied}
+                onChange={(event) => setDateApplied(event.target.value)}
               />
             </label>
             <label className="text-sm font-medium">
@@ -107,6 +110,8 @@ export default function AddApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 type="date"
+                value={nextFollowUp}
+                onChange={(event) => setNextFollowUp(event.target.value)}
               />
             </label>
           </div>
@@ -117,6 +122,8 @@ export default function AddApplicationPage() {
               className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
               rows={4}
               placeholder="What did you discuss? What is next?"
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
             />
           </label>
 
@@ -127,6 +134,8 @@ export default function AddApplicationPage() {
               <input
                 className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                 placeholder="https://company.com/jobs"
+                value={jobUrl}
+                onChange={(event) => setJobUrl(event.target.value)}
               />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
@@ -135,6 +144,8 @@ export default function AddApplicationPage() {
                 <input
                   className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                   type="date"
+                  value={interviewDate}
+                  onChange={(event) => setInterviewDate(event.target.value)}
                 />
               </label>
               <label className="text-sm font-medium">
@@ -142,6 +153,8 @@ export default function AddApplicationPage() {
                 <input
                   className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
                   type="time"
+                  value={interviewTime}
+                  onChange={(event) => setInterviewTime(event.target.value)}
                 />
               </label>
             </div>
