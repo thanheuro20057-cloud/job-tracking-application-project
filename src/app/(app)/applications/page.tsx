@@ -7,10 +7,9 @@ import { getApplications, type Application } from "@/lib/api";
 type ApplicationRow = Application & {
   dateAppliedLabel: string;
   location: string;
-  interviewDate: string;
-  nextFollowUp: string;
-  lastUpdated: string;
-  jobUrl: string;
+  interviewDateLabel: string;
+  nextFollowUpLabel: string;
+  lastUpdatedLabel: string;
 };
 
 const filters = ["All", "Applied", "Interview", "Offer", "Rejected"];
@@ -30,6 +29,7 @@ export default function ApplicationsPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load applications once when the page mounts.
   useEffect(() => {
     let isActive = true;
     const load = async () => {
@@ -38,14 +38,14 @@ export default function ApplicationsPage() {
         if (!isActive) return;
         const hydrated = data.map((item) => {
           const created = new Date(item.createdAt);
+          const updated = item.updatedAt ? new Date(item.updatedAt) : created;
           return {
             ...item,
-            dateAppliedLabel: created.toLocaleDateString(),
+            dateAppliedLabel: item.dateApplied || created.toLocaleDateString(),
             location: "Remote",
-            interviewDate: "",
-            nextFollowUp: "",
-            lastUpdated: created.toLocaleDateString(),
-            jobUrl: "",
+            interviewDateLabel: item.interviewDate || "N/A",
+            nextFollowUpLabel: item.nextFollowUp || "N/A",
+            lastUpdatedLabel: updated.toLocaleDateString(),
           };
         });
         setApplications(hydrated);
@@ -65,6 +65,7 @@ export default function ApplicationsPage() {
     };
   }, []);
 
+  // Client-side filter and sort for the table view.
   const filteredApplications = useMemo(() => {
     const filtered = applications.filter((app) => {
       const matchesSearch = [app.company, app.role]
@@ -178,13 +179,19 @@ export default function ApplicationsPage() {
                   <p className="text-xs text-muted-foreground">{app.location}</p>
                 </div>
                 <p>{app.role}</p>
-                <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status] || "bg-secondary text-foreground"}`}>
+                <span
+                  className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
+                    statusStyles[app.status] || "bg-secondary text-foreground"
+                  }`}
+                >
                   {app.status}
                 </span>
-                <div className="text-xs text-muted-foreground">{app.jobUrl ? "Link" : "N/A"}</div>
-                <div className="text-xs text-muted-foreground">{app.interviewDate || "N/A"}</div>
-                <div className="text-xs text-muted-foreground">{app.nextFollowUp || "N/A"}</div>
-                <div className="text-xs text-muted-foreground">{app.lastUpdated}</div>
+                <div className="text-xs text-muted-foreground">
+                  {app.jobUrl ? "Link" : "N/A"}
+                </div>
+                <div className="text-xs text-muted-foreground">{app.interviewDateLabel}</div>
+                <div className="text-xs text-muted-foreground">{app.nextFollowUpLabel}</div>
+                <div className="text-xs text-muted-foreground">{app.lastUpdatedLabel}</div>
                 <div className="flex justify-end gap-2 text-xs">
                   <Link className="rounded-full border border-border px-3 py-1 font-semibold" href={`/applications/${app.id}`}>
                     View
@@ -214,15 +221,19 @@ export default function ApplicationsPage() {
                     <p className="font-semibold">{app.company}</p>
                     <p className="text-xs text-muted-foreground">{app.role}</p>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusStyles[app.status] || "bg-secondary text-foreground"}`}>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${
+                      statusStyles[app.status] || "bg-secondary text-foreground"
+                    }`}
+                  >
                     {app.status}
                   </span>
                 </div>
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                   <p>Location: {app.location}</p>
-                  <p>Interview: {app.interviewDate || "N/A"}</p>
-                  <p>Follow-up: {app.nextFollowUp || "N/A"}</p>
-                  <p>Updated: {app.lastUpdated}</p>
+                  <p>Interview: {app.interviewDateLabel}</p>
+                  <p>Follow-up: {app.nextFollowUpLabel}</p>
+                  <p>Updated: {app.lastUpdatedLabel}</p>
                 </div>
                 <div className="mt-4 flex gap-2">
                   <Link
