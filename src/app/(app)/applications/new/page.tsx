@@ -9,15 +9,32 @@ export default function AddApplicationPage() {
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("Applied");
+  const [dateApplied, setDateApplied] = useState("");
+  const [nextFollowUp, setNextFollowUp] = useState("");
+  const [notes, setNotes] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
+  const [interviewDate, setInterviewDate] = useState("");
+  const [interviewTime, setInterviewTime] = useState("");
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Create the application via API, then return to the list.
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
     setIsSaving(true);
     try {
-      await createApplication({ company, role, status });
+      await createApplication({
+        company,
+        role,
+        status,
+        dateApplied,
+        nextFollowUp,
+        notes,
+        jobUrl,
+        interviewDate,
+        interviewTime,
+      });
       router.push("/applications");
       router.refresh();
     } catch (err) {

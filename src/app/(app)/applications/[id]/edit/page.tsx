@@ -46,12 +46,12 @@ export default function EditApplicationPage() {
           company: data.company,
           role: data.role,
           status: data.status || "Applied",
-          dateApplied: data.createdAt.slice(0, 10),
-          nextFollowUp: "",
-          notes: "",
-          jobUrl: "",
-          interviewDate: "",
-          interviewTime: "",
+          dateApplied: data.dateApplied || data.createdAt.slice(0, 10),
+          nextFollowUp: data.nextFollowUp || "",
+          notes: data.notes || "",
+          jobUrl: data.jobUrl || "",
+          interviewDate: data.interviewDate || "",
+          interviewTime: data.interviewTime || "",
         });
       } catch (err) {
         if (isActive) {
