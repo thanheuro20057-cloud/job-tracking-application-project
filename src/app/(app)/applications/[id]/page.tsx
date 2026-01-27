@@ -169,17 +169,21 @@ export default function ApplicationDetailsPage() {
               <div className="flex items-center justify-between">
                 <dt>Date applied</dt>
                 <dd className="font-semibold text-foreground">
-                  {new Date(application.createdAt).toLocaleDateString()}
+                  {application.dateApplied
+                    ? new Date(application.dateApplied).toLocaleDateString()
+                    : new Date(application.createdAt).toLocaleDateString()}
                 </dd>
               </div>
               <div className="flex items-center justify-between">
                 <dt>Next follow-up</dt>
-                <dd className="font-semibold text-foreground">Not scheduled</dd>
+                <dd className="font-semibold text-foreground">
+                  {application.nextFollowUp || "Not scheduled"}
+                </dd>
               </div>
               <div className="flex items-center justify-between">
                 <dt>Last updated</dt>
                 <dd className="font-semibold text-foreground">
-                  {new Date(application.createdAt).toLocaleDateString()}
+                  {new Date(application.updatedAt || application.createdAt).toLocaleDateString()}
                 </dd>
               </div>
             </dl>
