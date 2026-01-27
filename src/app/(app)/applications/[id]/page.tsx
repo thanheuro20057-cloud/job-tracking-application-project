@@ -116,17 +116,30 @@ export default function ApplicationDetailsPage() {
           <div className="rounded-[26px] border border-border bg-card p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Job posting</h2>
-              <span className="text-xs text-muted-foreground">Link not provided</span>
+              {application.jobUrl ? (
+                <a
+                  className="text-xs font-semibold text-muted-foreground"
+                  href={application.jobUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open link
+                </a>
+              ) : (
+                <span className="text-xs text-muted-foreground">Link not provided</span>
+              )}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Add a job posting URL in edit mode.</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {application.jobUrl || "Add a job posting URL in edit mode."}
+            </p>
           </div>
 
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Interview</h2>
             <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-              <p>Date: Not scheduled</p>
-              <p>Time: Not scheduled</p>
-              <p>Status: Pending</p>
+              <p>Date: {application.interviewDate || "Not scheduled"}</p>
+              <p>Time: {application.interviewTime || "Not scheduled"}</p>
+              <p>Status: {application.interviewDate ? "Scheduled" : "Pending"}</p>
             </div>
           </div>
 
