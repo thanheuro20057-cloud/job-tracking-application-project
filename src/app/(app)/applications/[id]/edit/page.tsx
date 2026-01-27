@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { getApplicationById } from "@/lib/api";
+import { useParams, useRouter } from "next/navigation";
+import { deleteApplication, getApplicationById, updateApplication } from "@/lib/api";
 
 type FormState = {
   company: string;
@@ -30,12 +30,15 @@ const emptyForm: FormState = {
 };
 
 export default function EditApplicationPage() {
+  const router = useRouter();
   const params = useParams() as Record<string, string | string[]> | null;
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? "";
   const [form, setForm] = useState<FormState>(emptyForm);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // Load application details for the selected id.
   useEffect(() => {
     let isActive = true;
     const load = async () => {
@@ -75,6 +78,36 @@ export default function EditApplicationPage() {
       isActive = false;
     };
   }, [id]);
+
+  const handleSave = async () => {
+    if (!id) return;
+    setIsSaving(true);
+    setError("");
+    try {
+      await updateApplication(id, form);
+      router.push(`/applications/${id}`);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save changes");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    setIsSaving(true);
+    setError("");
+    try {
+      await deleteApplication(id);
+      router.push("/applications");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete application");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -243,13 +276,15 @@ export default function EditApplicationPage() {
 
           <button
             className="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_24px_rgba(16,20,24,0.2)]"
-            disabled={isLoading}
+            onClick={handleSave}
+            disabled={isLoading || isSaving}
           >
-            Save changes
+            {isSaving ? "Saving..." : "Save changes"}
           </button>
           <button
             className="w-full rounded-2xl border border-border px-5 py-3 text-sm font-semibold text-muted-foreground"
-            disabled={isLoading}
+            onClick={handleDelete}
+            disabled={isLoading || isSaving}
           >
             Delete application
           </button>
