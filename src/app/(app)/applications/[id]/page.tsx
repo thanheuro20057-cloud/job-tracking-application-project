@@ -11,6 +11,13 @@ type ApplicationDetail = {
   role: string;
   status: string;
   createdAt: string;
+  dateApplied?: string;
+  nextFollowUp?: string;
+  notes?: string;
+  jobUrl?: string;
+  interviewDate?: string;
+  interviewTime?: string;
+  updatedAt?: string;
 };
 
 type TimelineEvent = {
@@ -32,6 +39,7 @@ export default function ApplicationDetailsPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load application details for the selected id.
   useEffect(() => {
     let isActive = true;
     const load = async () => {
