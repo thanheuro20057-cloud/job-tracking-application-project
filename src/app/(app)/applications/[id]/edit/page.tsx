@@ -149,6 +149,16 @@ export default function EditApplicationPage() {
                 disabled={isLoading}
               />
             </label>
+            <label className="text-sm font-medium">
+              Next follow-up
+              <input
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                type="date"
+                value={form.nextFollowUp}
+                onChange={(event) => setForm({ ...form, nextFollowUp: event.target.value })}
+                disabled={isLoading}
+              />
+            </label>
           </div>
 
           <label className="text-sm font-medium">
@@ -171,6 +181,29 @@ export default function EditApplicationPage() {
               disabled={isLoading}
             />
           </label>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="text-sm font-medium">
+              Interview date
+              <input
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                type="date"
+                value={form.interviewDate}
+                onChange={(event) => setForm({ ...form, interviewDate: event.target.value })}
+                disabled={isLoading}
+              />
+            </label>
+            <label className="text-sm font-medium">
+              Interview time
+              <input
+                className="mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm"
+                type="time"
+                value={form.interviewTime}
+                onChange={(event) => setForm({ ...form, interviewTime: event.target.value })}
+                disabled={isLoading}
+              />
+            </label>
+          </div>
         </div>
 
         <div className="space-y-6 rounded-[26px] border border-border bg-card p-6">
