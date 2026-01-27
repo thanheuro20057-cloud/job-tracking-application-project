@@ -192,22 +192,30 @@ export default function ApplicationDetailsPage() {
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Notes</h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Notes will appear here once added.
+              {application.notes || "Notes will appear here once added."}
             </p>
-            <button className="mt-4 rounded-full border border-border px-3 py-1 text-xs font-semibold">
-              Add note
-            </button>
+            <Link
+              href={`/applications/${application.id}/edit`}
+              className="mt-4 inline-flex rounded-full border border-border px-3 py-1 text-xs font-semibold"
+            >
+              Edit notes
+            </Link>
           </div>
 
           <div className="rounded-[26px] border border-border bg-card p-6">
             <h2 className="text-lg font-semibold">Follow-ups</h2>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
               <div className="rounded-2xl border border-border/70 bg-secondary px-4 py-3">
-                No follow-ups scheduled.
+                {application.nextFollowUp
+                  ? `Next follow-up on ${application.nextFollowUp}.`
+                  : "No follow-ups scheduled."}
               </div>
-              <button className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
-                Add follow-up
-              </button>
+              <Link
+                href={`/applications/${application.id}/edit`}
+                className="inline-flex rounded-full border border-border px-3 py-1 text-xs font-semibold"
+              >
+                Update follow-up
+              </Link>
             </div>
           </div>
 
